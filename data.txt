@@ -1,0 +1,665 @@
+
+SQL> SELECT * FROM drink;
+
+   DRINKID DRINKNAME                 PRICE QUANTITY
+---------- -------------------- ---------- --------------------
+DRINKAVAIL
+--------------------
+        80 pepsi                        30 medium
+yes
+
+        81 cocacola                     35 medium
+yes
+
+        82 mirinda                      30 small
+yes
+
+
+   DRINKID DRINKNAME                 PRICE QUANTITY
+---------- -------------------- ---------- --------------------
+DRINKAVAIL
+--------------------
+        83 lemontea                     50 large
+yes
+
+        84 freshlimejuice               40 large
+no
+
+        85 coffee                       20 small
+yes
+
+
+   DRINKID DRINKNAME                 PRICE QUANTITY
+---------- -------------------- ---------- --------------------
+DRINKAVAIL
+--------------------
+        86 tea                          20 small
+no
+
+        87 chocolate milkshake          35 medium
+yes
+
+
+8 rows selected.
+
+SQL> SELECT * FROM delivery;
+
+     DELID DELNAME              VEHICLENO                CUSTID      EMPID
+---------- -------------------- -------------------- ---------- ----------
+ DELCHARGE DELDATE   DELTIME
+---------- --------- --------------------
+        30 chandan              ka-04-9989                  103       1000
+        40 22-AUG-17 05:00
+
+        31 suresh               ka-04-2345                  104       1001
+        30 26-JUL-17 10:00
+
+        32 rajesh               ka-04-8826                  106       1002
+        70 15-SEP-17 16:00
+
+
+     DELID DELNAME              VEHICLENO                CUSTID      EMPID
+---------- -------------------- -------------------- ---------- ----------
+ DELCHARGE DELDATE   DELTIME
+---------- --------- --------------------
+        33 vinay                ka-04-6676                  102       1003
+        30 05-OCT-17 17:00
+
+        34 vijay                ka-04-3345                  109       1004
+        30 12-SEP-17 09:00
+
+        35 sumit                ka-04-1223                  100       1005
+        70 10-JAN-17 13:00
+
+
+     DELID DELNAME              VEHICLENO                CUSTID      EMPID
+---------- -------------------- -------------------- ---------- ----------
+ DELCHARGE DELDATE   DELTIME
+---------- --------- --------------------
+        36 amit                 ka-04-8865                  108       1006
+       100 06-JAN-17 15:00
+
+        37 prashant             ka-04-7869                  101       1007
+        30 14-MAR-17 19:00
+
+        38 bhuvan               ka-04-5656                  107       1000
+        30 01-JAN-17 12:00
+
+
+     DELID DELNAME              VEHICLENO                CUSTID      EMPID
+---------- -------------------- -------------------- ---------- ----------
+ DELCHARGE DELDATE   DELTIME
+---------- --------- --------------------
+        39 pramod               ka-04-4423                  105       1001
+        30 05-DEC-17 13:00
+
+
+10 rows selected.
+
+SQL> SELECT * FROM order1;
+
+     ORDID  TOTALCOST     FOODID    DRINKID      DELID
+---------- ---------- ---------- ---------- ----------
+        20        185         75         81         38
+        21        340         63         84         37
+        22        180         70         85         32
+        23        120         64         86         35
+        24       1430         72         80         34
+        25        150         64         83         31
+        26        240         67         82         30
+        27         95         66         81         33
+        29         80         68         84         39
+
+9 rows selected.
+
+SQL> SELECT * FROM payment;
+
+     PAYID PAYMETHOD                CUSTID      ORDID
+---------- -------------------- ---------- ----------
+        90 credit card                 100         20
+        91 cash                        102         21
+        92 debit card                  101         22
+        93 cash                        105         23
+        94 cash                        104         24
+        95 cash                        109         25
+        96 paytm                       108         26
+        97 credit card                 107         27
+        99 cash                        103         29
+
+9 rows selected.
+SQL> SELECT * FROM payment;
+
+     PAYID PAYMETHOD                CUSTID      ORDID
+---------- -------------------- ---------- ----------
+        90 credit card                 100         20
+        91 cash                        102         21
+        92 debit card                  101         22
+        93 cash                        105         23
+        94 cash                        104         24
+        95 cash                        109         25
+        96 paytm                       108         26
+        97 credit card                 107         27
+        99 cash                        103         29
+
+9 rows selected.
+
+SQL> SELECT * FROM order_items;
+
+  ORDER_ID
+----------
+ITEM_NAME
+--------------------------------------------------------------------------------
+  QUANTITY      PRICE
+---------- ----------
+         1
+Ice Cream
+         1         70
+
+         2
+Ice Cream
+         1         70
+
+  ORDER_ID
+----------
+ITEM_NAME
+--------------------------------------------------------------------------------
+  QUANTITY      PRICE
+---------- ----------
+
+         2
+Roti Curry
+         1         50
+
+         2
+Biryani
+
+  ORDER_ID
+----------
+ITEM_NAME
+--------------------------------------------------------------------------------
+  QUANTITY      PRICE
+---------- ----------
+         1        100
+
+         3
+Pizza
+         1        200
+
+         3
+
+  ORDER_ID
+----------
+ITEM_NAME
+--------------------------------------------------------------------------------
+  QUANTITY      PRICE
+---------- ----------
+Roti Curry
+         1         50
+
+         4
+Momos
+         1         60
+
+
+  ORDER_ID
+----------
+ITEM_NAME
+--------------------------------------------------------------------------------
+  QUANTITY      PRICE
+---------- ----------
+         5
+Biryani
+         7        100
+
+         6
+Biryani
+        11        100
+
+  ORDER_ID
+----------
+ITEM_NAME
+--------------------------------------------------------------------------------
+  QUANTITY      PRICE
+---------- ----------
+
+         7
+Burger
+         4        100
+
+         7
+Pizza
+
+  ORDER_ID
+----------
+ITEM_NAME
+--------------------------------------------------------------------------------
+  QUANTITY      PRICE
+---------- ----------
+         2        200
+
+         7
+Roti Curry
+         2         50
+
+         7
+
+  ORDER_ID
+----------
+ITEM_NAME
+--------------------------------------------------------------------------------
+  QUANTITY      PRICE
+---------- ----------
+Masala Dosa
+         1         40
+
+         7
+Idly Sambar
+         1         20
+
+
+  ORDER_ID
+----------
+ITEM_NAME
+--------------------------------------------------------------------------------
+  QUANTITY      PRICE
+---------- ----------
+         7
+Momos
+         1         60
+
+         8
+Momos
+         5         60
+
+  ORDER_ID
+----------
+ITEM_NAME
+--------------------------------------------------------------------------------
+  QUANTITY      PRICE
+---------- ----------
+
+         9
+Biryani
+         1        100
+
+
+17 rows selected.
+
+SQL> SELECT * FROM orders;
+
+  ORDER_ID
+----------
+ORDER_DATE
+---------------------------------------------------------------------------
+TOTAL_AMOUNT
+------------
+         1
+07-JAN-25 08.36.02.839000 PM
+       132.6
+
+         2
+07-JAN-25 08.36.12.351000 PM
+       309.6
+
+  ORDER_ID
+----------
+ORDER_DATE
+---------------------------------------------------------------------------
+TOTAL_AMOUNT
+------------
+
+         3
+07-JAN-25 08.48.54.155000 PM
+         345
+
+         4
+07-JAN-25 08.49.04.719000 PM
+
+  ORDER_ID
+----------
+ORDER_DATE
+---------------------------------------------------------------------------
+TOTAL_AMOUNT
+------------
+       120.8
+
+         5
+08-JAN-25 12.17.51.293000 AM
+         876
+
+         6
+
+  ORDER_ID
+----------
+ORDER_DATE
+---------------------------------------------------------------------------
+TOTAL_AMOUNT
+------------
+08-JAN-25 05.34.54.636000 PM
+        1348
+
+         7
+09-JAN-25 12.49.00.354000 PM
+      1253.6
+
+
+  ORDER_ID
+----------
+ORDER_DATE
+---------------------------------------------------------------------------
+TOTAL_AMOUNT
+------------
+         8
+09-JAN-25 12.49.37.352000 PM
+         404
+
+         9
+09-JAN-25 11.07.59.873000 PM
+         168
+
+  ORDER_ID
+----------
+ORDER_DATE
+---------------------------------------------------------------------------
+TOTAL_AMOUNT
+------------
+
+
+9 rows selected.
+
+SQL> SELECT * FROM customer;
+
+FNAME                LNAME                    CUSTID EMAILID
+-------------------- -------------------- ---------- --------------------
+PWD                  ADDRESS              STREET                  PINCODE
+-------------------- -------------------- -------------------- ----------
+GENDER                  PHONENO ALLERGY
+-------------------- ---------- --------------------
+John                 smith                       100 john@gmail.com
+xxy                  Bangalore            mg road                  560041
+Male                 9933300924 egg
+
+Ravi                 Sharma                      101 raviS@gmail.com
+abc                  Bangalore            jayanagar                560041
+M                    9242889791 onion,garlic
+
+FNAME                LNAME                    CUSTID EMAILID
+-------------------- -------------------- ---------- --------------------
+PWD                  ADDRESS              STREET                  PINCODE
+-------------------- -------------------- -------------------- ----------
+GENDER                  PHONENO ALLERGY
+-------------------- ---------- --------------------
+
+Preethi              Prasad                      102 preethi@yahoo.com
+xyz                  Bangalore            banashankari             560070
+F                    9844037640
+
+Kumar                Narayan                     103 kumar@gmail.com
+aab                  Bangalore            vv puram                 560004
+
+FNAME                LNAME                    CUSTID EMAILID
+-------------------- -------------------- ---------- --------------------
+PWD                  ADDRESS              STREET                  PINCODE
+-------------------- -------------------- -------------------- ----------
+GENDER                  PHONENO ALLERGY
+-------------------- ---------- --------------------
+M                    9511747841 nuts
+
+Chetana              Ashok                       104 chetana@yahoo.in
+123                  Bangalore            jayanagar                560041
+F                     998056423
+
+Harsha               Gowda                       105 harshaG@gmail.com
+
+FNAME                LNAME                    CUSTID EMAILID
+-------------------- -------------------- ---------- --------------------
+PWD                  ADDRESS              STREET                  PINCODE
+-------------------- -------------------- -------------------- ----------
+GENDER                  PHONENO ALLERGY
+-------------------- ---------- --------------------
+bbc                  Bangalore            banashankari             560070
+M                    8861268940
+
+Priya                Singh                       106 priya@gmail.com
+cba                  Bangalore            indiranagar              560038
+F                    8879610560 egg
+
+
+FNAME                LNAME                    CUSTID EMAILID
+-------------------- -------------------- ---------- --------------------
+PWD                  ADDRESS              STREET                  PINCODE
+-------------------- -------------------- -------------------- ----------
+GENDER                  PHONENO ALLERGY
+-------------------- ---------- --------------------
+Neha                 Jayanth                     107 neha@gmail.com
+rsa                  Bangalore            jayanagar                560041
+Male                 8924299881
+
+Alice                Zelaya                      108 alice@gmail.com
+cvd                  Bangalore            Whitefield               400050
+F                    7031086846
+
+FNAME                LNAME                    CUSTID EMAILID
+-------------------- -------------------- ---------- --------------------
+PWD                  ADDRESS              STREET                  PINCODE
+-------------------- -------------------- -------------------- ----------
+GENDER                  PHONENO ALLERGY
+-------------------- ---------- --------------------
+
+Ahmad                Jabbar                      109 jahmad@gmail.com
+dad                  Bangalore            banashankari             560070
+Female               9760578022
+
+
+10 rows selected.
+
+SQL> SELECT * FROM chef;
+
+    CHEFID CHEFNAME             ADDRESS              STREET
+---------- -------------------- -------------------- --------------------
+PHONENO                    SPEC      EMPID EMAILID
+-------------------- ---------- ---------- --------------------
+PWD                      SALARY
+-------------------- ----------
+         1 kumar                bangalore            girinagar
+9894757471                   15       1005 kumar@gmail.com
+@ed                       40000
+
+         2 nikhil               bangalore            putenahalli
+7845795451                   10       1004 nikhil@gmail.com
+rfd                       30000
+
+    CHEFID CHEFNAME             ADDRESS              STREET
+---------- -------------------- -------------------- --------------------
+PHONENO                    SPEC      EMPID EMAILID
+-------------------- ---------- ---------- --------------------
+PWD                      SALARY
+-------------------- ----------
+
+         3 lakshmi              bangalore            vijayanagar
+7745777888                   12       1007 lakshmi@gmail.com
+poi                       40000
+
+         4 ram                  bangalore            shantinagar
+698454892                    13       1000 ram@gmail.com
+
+    CHEFID CHEFNAME             ADDRESS              STREET
+---------- -------------------- -------------------- --------------------
+PHONENO                    SPEC      EMPID EMAILID
+-------------------- ---------- ---------- --------------------
+PWD                      SALARY
+-------------------- ----------
+uvw                       30000
+
+         5 rahul                mysore               adugodi
+744587554                    11       1005 rahul@gmail.com
+ytr                       40000
+
+
+SQL> SELECT * FROM food;
+
+    FOODID FOODNAME                  PRICE   QUANTITY FOODAVAIL
+---------- -------------------- ---------- ---------- --------------------
+ CUISINEID      INGID     CHEFID
+---------- ---------- ----------
+        60 biriyani                    100          1 yes
+        11        150          5
+
+        61 idlysambar                   20          2 yes
+        12        150          3
+
+        62 momos                        60          1 yes
+        10        152          2
+
+
+    FOODID FOODNAME                  PRICE   QUANTITY FOODAVAIL
+---------- -------------------- ---------- ---------- --------------------
+ CUISINEID      INGID     CHEFID
+---------- ---------- ----------
+        63 burger                      100          3 yes
+        13        153          4
+
+        64 roti curry                   50          2 yes
+        12        151          5
+
+        65 taco                         50          4 yes
+        14        151          4
+
+
+    FOODID FOODNAME                  PRICE   QUANTITY FOODAVAIL
+---------- -------------------- ---------- ---------- --------------------
+ CUISINEID      INGID     CHEFID
+---------- ---------- ----------
+        66 fried rice                   60          1 yes
+        12        150          5
+
+        67 ice cream                    70          3 yes
+        15        154          1
+
+        68 sandwich                     40          1 yes
+        13        153          4
+
+
+    FOODID FOODNAME                  PRICE   QUANTITY FOODAVAIL
+---------- -------------------- ---------- ---------- --------------------
+ CUISINEID      INGID     CHEFID
+---------- ---------- ----------
+        69 vada                         20          2 yes
+        12        150          3
+
+        70 masala dosa                  40          4 yes
+        12        150          3
+
+        71 nachos                      100          3 yes
+        14        151          4
+
+
+    FOODID FOODNAME                  PRICE   QUANTITY FOODAVAIL
+---------- -------------------- ---------- ---------- --------------------
+ CUISINEID      INGID     CHEFID
+---------- ---------- ----------
+        72 pizza                       200          7 yes
+        17        152          4
+
+        73 pad thai                    250          1 no
+        16        155          2
+
+        74 chinesesoup                  60          3 yes
+        10        155          2
+
+
+    FOODID FOODNAME                  PRICE   QUANTITY FOODAVAIL
+---------- -------------------- ---------- ---------- --------------------
+ CUISINEID      INGID     CHEFID
+---------- ---------- ----------
+        75 eggrice                      50          3 yes
+        11        156          5
+
+
+16 rows selected.
+
+SQL> SELECT * FROM employee;
+
+     EMPID FNAME                LNAME                DOB
+---------- -------------------- -------------------- --------------------
+EMAILID              PWD                  ADDRESS                 PHONENO
+-------------------- -------------------- -------------------- ----------
+GENDER                   SALARY
+-------------------- ----------
+      1000 adam                 lavine               15-SEP-89
+adam@gmail.com       adc                  Bangalore            9980594577
+M                         50000
+
+      1001 chris                martin               13-AUG-92
+chris@gmail.com      145                  Adugodi              9844038540
+M                         40000
+
+     EMPID FNAME                LNAME                DOB
+---------- -------------------- -------------------- --------------------
+EMAILID              PWD                  ADDRESS                 PHONENO
+-------------------- -------------------- -------------------- ----------
+GENDER                   SALARY
+-------------------- ----------
+
+      1002 alex                 wasabi               26-JUL-82
+alexw@gmail.com      123                  girinagar            9611747941
+M                         35000
+
+      1003 abby                 lee                  30-JAN-95
+abby@gmail.com       1@4                  kengeri              9248289899
+
+     EMPID FNAME                LNAME                DOB
+---------- -------------------- -------------------- --------------------
+EMAILID              PWD                  ADDRESS                 PHONENO
+-------------------- -------------------- -------------------- ----------
+GENDER                   SALARY
+-------------------- ----------
+F                         60000
+
+      1004 briana               lodge                27-JUL-86
+briana@gmail.com     aah                  jayanagar            8861360860
+F                         50000
+
+      1005 maria                solano               22-DEC-95
+
+     EMPID FNAME                LNAME                DOB
+---------- -------------------- -------------------- --------------------
+EMAILID              PWD                  ADDRESS                 PHONENO
+-------------------- -------------------- -------------------- ----------
+GENDER                   SALARY
+-------------------- ----------
+maria@gmail.com      lad                  double road          9483960975
+F                         40000
+
+      1006 ava                  anderson             29-JAN-86
+ava@gmail.com        678                  kh road              7486911232
+F                         60000
+
+
+     EMPID FNAME                LNAME                DOB
+---------- -------------------- -------------------- --------------------
+EMAILID              PWD                  ADDRESS                 PHONENO
+-------------------- -------------------- -------------------- ----------
+GENDER                   SALARY
+-------------------- ----------
+      1007 raksha               remash               06-JUN-92
+raksha@gmail.com     894                  Bangalore            9835383461
+F                         70000
+
+
+8 rows selected.
+
+SQL> SELECT * FROM cuisine;
+
+ CUISINEID CUISINENAME
+---------- --------------------
+        11 north indian
+        12 south indian
+        13 continential
+        14 mexican
+        15 dessert
+        16 thai
+        17 italian
+        10 chinese
+
+8 rows selected.
