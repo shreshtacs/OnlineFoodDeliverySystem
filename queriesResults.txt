@@ -1,0 +1,675 @@
+SQL> -- 2. Create chef specialization view
+SQL> CREATE VIEW chef_specialties AS
+  2  SELECT ch.chefid, ch.chefname, c.cuisinename,
+  3         COUNT(f.foodid) as dishes_count
+  4  FROM chef ch
+  5  JOIN food f ON ch.chefid = f.chefid
+  6  JOIN cuisine c ON f.cuisineid = c.cuisineid
+  7  GROUP BY ch.chefid, ch.chefname, c.cuisinename;
+
+View created.
+
+SQL> select * from chef_specialties;
+
+    CHEFID CHEFNAME             CUISINENAME          DISHES_COUNT
+---------- -------------------- -------------------- ------------
+         5 rahul                north indian                    2
+         3 lakshmi              south indian                    3
+         2 nikhil               chinese                         2
+         4 ram                  continential                    2
+         5 rahul                south indian                    2
+         4 ram                  mexican                         2
+         1 kumar                dessert                         1
+         4 ram                  italian                         1
+         2 nikhil               thai                            1
+
+9 rows selected.
+
+SQL> drop view chef_specialties;
+
+View dropped.
+
+SQL> SELECT c.fname, c.lname
+  2  FROM customer c
+  3  WHERE EXISTS (
+  4      SELECT 1 FROM payment p
+  5      WHERE p.custid = c.custid
+  6  );
+
+FNAME                LNAME
+-------------------- --------------------
+John                 smith
+Ravi                 Sharma
+Preethi              Prasad
+Kumar                Narayan
+Chetana              Ashok
+Harsha               Gowda
+Neha                 Jayanth
+Alice                Zelaya
+Ahmad                Jabbar
+
+9 rows selected.
+
+SQL> SELECT c.fname, c.lname
+  2  FROM customer c
+  3  WHERE NOT EXISTS (
+  4      SELECT 1 FROM payment p
+  5      WHERE p.custid = c.custid
+  6  );
+
+FNAME                LNAME
+-------------------- --------------------
+Priya                Singh
+
+SQL> SELECT SUM(totalcost) as total_revenue FROM order1;
+
+TOTAL_REVENUE
+-------------
+         2820
+
+SQL> SELECT c.cuisinename, AVG(f.price) as avg_price
+  2  FROM food f
+  3  JOIN cuisine c ON f.cuisineid = c.cuisineid
+  4  GROUP BY c.cuisinename;
+
+CUISINENAME           AVG_PRICE
+-------------------- ----------
+north indian                 75
+south indian                 38
+chinese                      60
+continential                 70
+mexican                      75
+dessert                      70
+italian                     200
+thai                        250
+
+8 rows selected.
+
+SQL> SELECT c.fname, c.lname, COUNT(p.ordid) as order_count
+  2  FROM customer c
+  3  LEFT JOIN payment p ON c.custid = p.custid
+  4  GROUP BY c.fname, c.lname;
+
+FNAME                LNAME                ORDER_COUNT
+-------------------- -------------------- -----------
+John                 smith                          1
+Preethi              Prasad                         1
+Ravi                 Sharma                         1
+Harsha               Gowda                          1
+Chetana              Ashok                          1
+Ahmad                Jabbar                         1
+Alice                Zelaya                         1
+Neha                 Jayanth                        1
+Kumar                Narayan                        1
+Priya                Singh                          0
+
+10 rows selected.
+
+SQL> -- 4. Min/Max delivery charges
+SQL> SELECT MIN(delcharge) as min_charge,
+  2         MAX(delcharge) as max_charge,
+  3         AVG(delcharge) as avg_charge
+  4  FROM delivery;
+
+MIN_CHARGE MAX_CHARGE AVG_CHARGE
+---------- ---------- ----------
+        30        100         46
+
+SQL> -- Find customers who have orders with amount higher than their average
+SQL> SELECT DISTINCT c.fname, c.lname
+  2  FROM customer c
+  3  WHERE EXISTS (
+  4      SELECT 1 FROM payment p
+  5      JOIN order1 o ON p.ordid = o.ordid
+  6      WHERE p.custid = c.custid
+  7      AND o.totalcost < (
+  8          SELECT AVG(o2.totalcost)
+  9          FROM order1 o2
+ 10          JOIN payment p2 ON o2.ordid = p2.ordid
+ 11          WHERE p2.custid > c.custid
+ 12      )
+ 13  );
+
+FNAME                LNAME
+-------------------- --------------------
+John                 smith
+Preethi              Prasad
+Ravi                 Sharma
+Harsha               Gowda
+Neha                 Jayanth
+Kumar                Narayan
+
+6 rows selected.
+
+SQL> -- 1. Find customers with gmail emails
+SQL> SELECT fname, lname, emailid
+  2  FROM customer
+  3  WHERE emailid LIKE '%gmail%';
+
+FNAME                LNAME                EMAILID
+-------------------- -------------------- --------------------
+John                 smith                john@gmail.com
+Ravi                 Sharma               raviS@gmail.com
+Kumar                Narayan              kumar@gmail.com
+Harsha               Gowda                harshaG@gmail.com
+Priya                Singh                priya@gmail.com
+Neha                 Jayanth              neha@gmail.com
+Alice                Zelaya               alice@gmail.com
+Ahmad                Jabbar               jahmad@gmail.com
+
+8 rows selected.
+
+SQL>
+SQL> -- 2. Find food items containing 'rice'
+SQL> SELECT foodname, price
+  2  FROM food
+  3  WHERE LOWER(foodname) LIKE '%rice%';
+
+FOODNAME                  PRICE
+-------------------- ----------
+fried rice                   60
+eggrice                      50
+
+SQL>
+SQL> -- 3. Find employees with salary between 40000 and 60000
+SQL> SELECT fname, lname, salary
+  2  FROM employee
+  3  WHERE salary BETWEEN 40000 AND 60000;
+
+FNAME                LNAME                    SALARY
+-------------------- -------------------- ----------
+adam                 lavine                    50000
+chris                martin                    40000
+abby                 lee                       60000
+briana               lodge                     50000
+maria                solano                    40000
+ava                  anderson                  60000
+
+6 rows selected.
+
+SQL> Having (2):
+SP2-0734: unknown command beginning "Having (2)..." - rest of line ignored.
+SQL> -- 1. Find cuisines with more than 3 food items
+SQL> SELECT c.cuisinename, COUNT(f.foodid) as food_count
+  2  FROM cuisine c
+  3  JOIN food f ON c.cuisineid = f.cuisineid
+  4  GROUP BY c.cuisinename
+  5  HAVING COUNT(f.foodid) > 3;
+
+CUISINENAME          FOOD_COUNT
+-------------------- ----------
+south indian                  5
+
+SQL>
+SQL> -- 2. Find delivery employees with multiple deliveries
+SQL> SELECT empid, COUNT(*) as delivery_count
+  2  FROM delivery
+  3  GROUP BY empid
+  4  HAVING COUNT(*) > 2;
+
+no rows selected
+
+SQL> -- 1. Count orders by payment method
+SQL> SELECT paymethod, COUNT(*) as payment_count
+  2  FROM payment
+  3  GROUP BY paymethod;
+
+PAYMETHOD            PAYMENT_COUNT
+-------------------- -------------
+credit card                      2
+cash                             5
+debit card                       1
+paytm                            1
+
+SQL>
+SQL> -- 2. Calculate total cost by food
+SQL> SELECT f.foodname, SUM(o.totalcost) as total_sales
+  2  FROM order1 o
+  3  JOIN food f ON o.foodid = f.foodid
+  4  GROUP BY f.foodname;
+
+FOODNAME             TOTAL_SALES
+-------------------- -----------
+eggrice                      185
+burger                       340
+masala dosa                  180
+roti curry                   270
+pizza                       1430
+ice cream                    240
+fried rice                    95
+sandwich                      80
+
+8 rows selected.
+
+SQL> -- 1. List all unique addresses from customers and employees
+SQL> SELECT address FROM customer
+  2  UNION
+  3  SELECT address FROM employee;
+
+ADDRESS
+--------------------
+Bangalore
+Adugodi
+girinagar
+kengeri
+jayanagar
+double road
+kh road
+
+7 rows selected.
+
+SQL>
+SQL> -- 2. Find addresses where both customers and employees have pincode 560041
+SQL> SELECT address FROM customer WHERE pincode = 560041
+  2  INTERSECT
+  3  SELECT address FROM employee WHERE address IN
+  4      (SELECT address FROM customer WHERE pincode = 560041);
+
+ADDRESS
+--------------------
+Bangalore
+
+SQL> -- 1. Find customers who ordered pizza
+SQL> SELECT fname, lname
+  2  FROM customer
+  3  WHERE custid IN (
+  4      SELECT custid FROM payment WHERE ordid IN
+  5      (SELECT ordid FROM order1 WHERE foodid =
+  6      (SELECT foodid FROM food WHERE foodname = 'pizza'))
+  7  );
+
+FNAME                LNAME
+-------------------- --------------------
+Chetana              Ashok
+
+SQL>
+SQL> -- 2. Find deliveries made by high-paid employees
+SQL> SELECT delid, delname
+  2  FROM delivery
+  3  WHERE empid IN (SELECT empid FROM employee WHERE salary > 50000);
+
+     DELID DELNAME
+---------- --------------------
+        33 vinay
+        36 amit
+        37 prashant
+
+SQL>
+SQL> -- 3. Find foods costlier than average
+SQL> SELECT foodname, price
+  2  FROM food
+  3  WHERE price > (SELECT AVG(price) FROM food);
+
+FOODNAME                  PRICE
+-------------------- ----------
+biriyani                    100
+burger                      100
+nachos                      100
+pizza                       200
+pad thai                    250
+
+SQL>
+SQL> -- 4. Find customers who ordered south Indian cuisine
+SQL> SELECT fname, lname FROM customer
+  2  WHERE custid IN (
+  3      SELECT custid FROM payment WHERE ordid IN
+  4      (SELECT ordid FROM order1 WHERE foodid IN
+  5      (SELECT foodid FROM food WHERE cuisineid =
+  6      (SELECT cuisineid FROM cuisine WHERE cuisinename = 'south indian')))
+  7  );
+
+FNAME                LNAME
+-------------------- --------------------
+Ravi                 Sharma
+Harsha               Gowda
+Ahmad                Jabbar
+Neha                 Jayanth
+
+SQL>
+SQL> -- 5. Find chefs with salary higher than employee average
+SQL> SELECT chefname
+  2  FROM chef
+  3  WHERE salary > (SELECT AVG(salary) FROM employee);
+
+no rows selected
+
+SQL> -- 1. List all allergic customers
+SQL> SELECT fname, lname FROM customer WHERE allergy IS NOT NULL;
+
+FNAME                LNAME
+-------------------- --------------------
+John                 smith
+Ravi                 Sharma
+Kumar                Narayan
+Priya                Singh
+
+SQL>
+SQL> -- 2. Find all food items with high price
+SQL> SELECT foodname, price FROM food WHERE price > 100;
+
+FOODNAME                  PRICE
+-------------------- ----------
+pizza                       200
+pad thai                    250
+
+SQL>
+SQL> -- 3. List all employees with salary above 50000
+SQL> SELECT fname, lname, salary FROM employee WHERE salary > 50000;
+
+FNAME                LNAME                    SALARY
+-------------------- -------------------- ----------
+abby                 lee                       60000
+ava                  anderson                  60000
+raksha               remash                    70000
+
+SQL>
+SQL> -- 4. Show all deliveries made before 10:00
+SQL> SELECT delid, delname, deltime FROM delivery WHERE deltime < '10:00';
+
+     DELID DELNAME              DELTIME
+---------- -------------------- --------------------
+        30 chandan              05:00
+        34 vijay                09:00
+
+SQL>
+SQL> -- 5. Find all available drinks
+SQL> SELECT drinkname, price FROM drink WHERE drinkavail = 'yes';
+
+DRINKNAME                 PRICE
+-------------------- ----------
+pepsi                        30
+cocacola                     35
+mirinda                      30
+lemontea                     50
+coffee                       20
+chocolate milkshake          35
+
+6 rows selected.
+
+SQL> -- 1. Create comprehensive order view
+SQL> CREATE VIEW order_details AS
+  2  SELECT o.ordid, c.fname, c.lname, f.foodname, d.drinkname, o.totalcost,
+  3         dl.delname, dl.deldate, dl.deltime
+  4  FROM order1 o
+  5  JOIN payment p ON o.ordid = p.ordid
+  6  JOIN customer c ON p.custid = c.custid
+  7  JOIN food f ON o.foodid = f.foodid
+  8  JOIN drink d ON o.drinkid = d.drinkid
+  9  JOIN delivery dl ON o.delid = dl.delid;
+
+View created.
+
+SQL>
+SQL> SELECT * FROM order_details;
+
+     ORDID FNAME                LNAME                FOODNAME
+---------- -------------------- -------------------- --------------------
+DRINKNAME             TOTALCOST DELNAME              DELDATE
+-------------------- ---------- -------------------- ---------
+DELTIME
+--------------------
+        20 John                 smith                eggrice
+cocacola                    185 bhuvan               01-JAN-17
+12:00
+
+        21 Preethi              Prasad               burger
+freshlimejuice              340 prashant             14-MAR-17
+19:00
+
+     ORDID FNAME                LNAME                FOODNAME
+---------- -------------------- -------------------- --------------------
+DRINKNAME             TOTALCOST DELNAME              DELDATE
+-------------------- ---------- -------------------- ---------
+DELTIME
+--------------------
+
+        22 Ravi                 Sharma               masala dosa
+coffee                      180 rajesh               15-SEP-17
+16:00
+
+        23 Harsha               Gowda                roti curry
+tea                         120 sumit                10-JAN-17
+
+     ORDID FNAME                LNAME                FOODNAME
+---------- -------------------- -------------------- --------------------
+DRINKNAME             TOTALCOST DELNAME              DELDATE
+-------------------- ---------- -------------------- ---------
+DELTIME
+--------------------
+13:00
+
+        24 Chetana              Ashok                pizza
+pepsi                      1430 vijay                12-SEP-17
+09:00
+
+        25 Ahmad                Jabbar               roti curry
+
+     ORDID FNAME                LNAME                FOODNAME
+---------- -------------------- -------------------- --------------------
+DRINKNAME             TOTALCOST DELNAME              DELDATE
+-------------------- ---------- -------------------- ---------
+DELTIME
+--------------------
+lemontea                    150 suresh               26-JUL-17
+10:00
+
+        26 Alice                Zelaya               ice cream
+mirinda                     240 chandan              22-AUG-17
+05:00
+
+
+     ORDID FNAME                LNAME                FOODNAME
+---------- -------------------- -------------------- --------------------
+DRINKNAME             TOTALCOST DELNAME              DELDATE
+-------------------- ---------- -------------------- ---------
+DELTIME
+--------------------
+        27 Neha                 Jayanth              fried rice
+cocacola                     95 vinay                05-OCT-17
+17:00
+
+        29 Kumar                Narayan              sandwich
+freshlimejuice               80 pramod               05-DEC-17
+13:00
+
+     ORDID FNAME                LNAME                FOODNAME
+---------- -------------------- -------------------- --------------------
+DRINKNAME             TOTALCOST DELNAME              DELDATE
+-------------------- ---------- -------------------- ---------
+DELTIME
+--------------------
+
+
+9 rows selected.
+
+SQL>
+SQL> -- 2. Create chef specialization view
+SQL> CREATE VIEW chef_specialties AS
+  2  SELECT ch.chefid, ch.chefname, c.cuisinename,
+  3         COUNT(f.foodid) as dishes_count
+  4  FROM chef ch
+  5  JOIN food f ON ch.chefid = f.chefid
+  6  JOIN cuisine c ON f.cuisineid = c.cuisineid
+  7  GROUP BY ch.chefid, ch.chefname, c.cuisinename;
+
+View created.
+
+SQL>
+SQL> select * from chef_specialties;
+
+    CHEFID CHEFNAME             CUISINENAME          DISHES_COUNT
+---------- -------------------- -------------------- ------------
+         5 rahul                north indian                    2
+         3 lakshmi              south indian                    3
+         2 nikhil               chinese                         2
+         4 ram                  continential                    2
+         5 rahul                south indian                    2
+         4 ram                  mexican                         2
+         1 kumar                dessert                         1
+         4 ram                  italian                         1
+         2 nikhil               thai                            1
+
+9 rows selected.
+
+SQL> drop view chef_specialties;
+
+View dropped.
+
+SQL> drop view order_details;
+
+View dropped.
+
+
+SQL> SELECT chefid, chefname
+  2  FROM chef c
+  3  WHERE NOT EXISTS (
+  4      SELECT 1
+  5      FROM food f
+  6      WHERE f.chefid < c.chefid
+  7  );
+
+    CHEFID CHEFNAME
+---------- --------------------
+         1 kumar
+
+
+SQL> -- Find employees who are not assigned to any delivery
+SQL> SELECT empid, fname, lname
+  2  FROM employee e
+  3  WHERE NOT EXISTS (
+  4      SELECT 1
+  5      FROM delivery d
+  6      WHERE d.empid = e.empid
+  7  );
+
+no rows selected
+
+SQL> -- Create a trigger to prevent orders with a total cost below 100
+SQL> CREATE OR REPLACE TRIGGER prevent_low_cost_orders
+  2  BEFORE INSERT ON orders
+  3  FOR EACH ROW
+  4  BEGIN
+  5      IF :NEW.total_amount < 100 THEN
+  6          RAISE_APPLICATION_ERROR(-20001, 'Order total amount must be at least 100.');
+  7      END IF;
+  8  END;
+  9  /
+
+Trigger created.
+
+SQL> INSERT INTO orders (order_id, order_date, total_amount)
+  2  VALUES (101, SYSTIMESTAMP, 500);
+INSERT INTO orders (order_id, order_date, total_amount)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (SYSTEM.SYS_C008342) violated
+
+
+SQL> SELECT order_id FROM orders;
+
+  ORDER_ID
+----------
+         1
+         2
+         3
+         4
+         5
+         6
+         7
+         8
+         9
+        11
+        12
+
+  ORDER_ID
+----------
+        13
+        14
+        15
+       101
+
+15 rows selected.
+
+SQL> INSERT INTO orders (order_id, order_date, total_amount)
+  2  VALUES (102, SYSTIMESTAMP, 500);
+
+1 row created.
+
+SQL> SELECT * FROM order_log;
+
+    LOG_ID   ORDER_ID
+---------- ----------
+LOG_DATE
+---------------------------------------------------------------------------
+MESSAGE
+--------------------------------------------------------------------------------
+         1        101
+12-JAN-25 09.32.55.401000 PM
+New order inserted with ID 101
+
+         2        102
+12-JAN-25 09.42.31.210000 PM
+New order inserted with ID 102
+
+    LOG_ID   ORDER_ID
+---------- ----------
+LOG_DATE
+---------------------------------------------------------------------------
+MESSAGE
+--------------------------------------------------------------------------------
+
+SQL> SELECT fname, lname
+  2  FROM customer c
+  3  WHERE NOT EXISTS (
+  4      SELECT 1
+  5      FROM payment p
+  6      WHERE p.custid = c.custid
+  7  );
+
+FNAME                LNAME
+-------------------- --------------------
+Priya                Singh
+
+SQL> SELECT SUM(totalcost) AS total_revenue
+  2  FROM order1;
+
+TOTAL_REVENUE
+-------------
+         2820
+
+SQL> SELECT MAX(price) AS max_food_price
+  2  FROM food;
+
+MAX_FOOD_PRICE
+--------------
+           250
+
+SQL> SELECT COUNT(*) AS employee_count
+  2  FROM employee;
+
+EMPLOYEE_COUNT
+--------------
+             8
+
+SQL> -- Create a table to store logs
+SQL> CREATE TABLE order_log (
+  2      log_id NUMBER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  3      order_id NUMBER,
+  4      log_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  5      message VARCHAR2(100)
+  6  );
+
+Table created.
+
+SQL>
+SQL> -- Create the trigger
+SQL> CREATE OR REPLACE TRIGGER order_insert_log
+  2  AFTER INSERT ON orders
+  3  FOR EACH ROW
+  4  BEGIN
+  5      INSERT INTO order_log (order_id, message)
+  6      VALUES (:NEW.order_id, 'New order inserted with ID ' || :NEW.order_id);
+  7  END;
+  8  /
+
+Trigger created.
