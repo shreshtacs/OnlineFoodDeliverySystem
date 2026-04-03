@@ -1,0 +1,121 @@
+//ER Diagram
+
+SQL> describe order_items;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ ORDER_ID                                  NOT NULL NUMBER
+ ITEM_NAME                                 NOT NULL VARCHAR2(100)
+ QUANTITY                                           NUMBER
+ PRICE                                              NUMBER(10,2)
+
+ SQL> describe orders;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ ORDER_ID                                  NOT NULL NUMBER
+ ORDER_DATE                                         TIMESTAMP(6)
+ TOTAL_AMOUNT                                       NUMBER(10,2)
+
+ 
+SQL> describe customer;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ FNAME                                              VARCHAR2(20)
+ LNAME                                              VARCHAR2(20)
+ CUSTID                                    NOT NULL NUMBER(38)
+ EMAILID                                            VARCHAR2(20)
+ PWD                                                VARCHAR2(20)
+ ADDRESS                                            VARCHAR2(20)
+ STREET                                             VARCHAR2(20)
+ PINCODE                                            NUMBER(38)
+ GENDER                                             VARCHAR2(20)
+ PHONENO                                            NUMBER(38)
+ ALLERGY                                            VARCHAR2(20)
+
+ 
+SQL> describe chef;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ CHEFID                                    NOT NULL NUMBER(38)
+ CHEFNAME                                           VARCHAR2(20)
+ ADDRESS                                            VARCHAR2(20)
+ STREET                                             VARCHAR2(20)
+ PHONENO                                            VARCHAR2(20)
+ SPEC                                               NUMBER(38)
+ EMPID                                              NUMBER(38)
+ EMAILID                                            VARCHAR2(20)
+ PWD                                                VARCHAR2(20)
+ SALARY                                             NUMBER(10,2)
+
+
+SQL> describe food;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ FOODID                                    NOT NULL NUMBER(38)
+ FOODNAME                                           VARCHAR2(20)
+ PRICE                                              NUMBER(38)
+ QUANTITY                                           NUMBER(38)
+ FOODAVAIL                                          VARCHAR2(20)
+ CUISINEID                                          NUMBER(38)
+ INGID                                              NUMBER(38)
+ CHEFID                                             NUMBER(38)
+
+ describe employee;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ EMPID                                     NOT NULL NUMBER(38)
+ FNAME                                              VARCHAR2(20)
+ LNAME                                              VARCHAR2(20)
+ DOB                                                VARCHAR2(20)
+ EMAILID                                            VARCHAR2(20)
+ PWD                                                VARCHAR2(20)
+ ADDRESS                                            VARCHAR2(20)
+ PHONENO                                            NUMBER(38)
+ GENDER                                             VARCHAR2(20)
+ SALARY                                             NUMBER(10,2)
+
+SQL> describe cuisine;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ CUISINEID                                 NOT NULL NUMBER(38)
+ CUISINENAME                                        VARCHAR2(20)
+
+ 
+SQL> describe drink;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DRINKID                                   NOT NULL NUMBER(38)
+ DRINKNAME                                          VARCHAR2(20)
+ PRICE                                              NUMBER(10,2)
+ QUANTITY                                           VARCHAR2(20)
+ DRINKAVAIL                                         VARCHAR2(20)
+
+ 
+SQL> describe delivery;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DELID                                     NOT NULL NUMBER(38)
+ DELNAME                                            VARCHAR2(20)
+ VEHICLENO                                          VARCHAR2(20)
+ CUSTID                                             NUMBER(38)
+ EMPID                                              NUMBER(38)
+ DELCHARGE                                          NUMBER(38)
+ DELDATE                                            DATE
+ DELTIME                                            VARCHAR2(20)
+
+ SQL> describe order1;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ ORDID                                     NOT NULL NUMBER(38)
+ TOTALCOST                                          NUMBER(38)
+ FOODID                                             NUMBER(38)
+ DRINKID                                            NUMBER(38)
+ DELID                                              NUMBER(38)
+
+ 
+SQL> describe payment;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ PAYID                                     NOT NULL NUMBER(38)
+ PAYMETHOD                                          VARCHAR2(20)
+ CUSTID                                             NUMBER(38)
+ ORDID                                              NUMBER(38)
