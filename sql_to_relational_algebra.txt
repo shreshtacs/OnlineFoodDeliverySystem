@@ -1,0 +1,220 @@
+
+Simple Queries:
+
+1. List all allergic customers
+SQL: 
+SELECT fname, lname FROM customer WHERE allergy IS NOT NULL;
+Relational Algebra: 
+π_fname, lname(σ_allergy IS NOT NULL(customer))
+
+2. Find all food items with high price
+SQL:
+SELECT foodname, price FROM food WHERE price > 100;
+Relational Algebra:
+π_foodname, price(σ_price > 100(food))
+
+3. List all employees with salary above 50000
+SQL:
+SELECT fname, lname, salary FROM employee WHERE salary > 50000;
+Relational Algebra:
+π_fname, lname, salary(σ_salary > 50000(employee))
+
+4. Show all deliveries made before 10:00
+SQL:
+SELECT delid, delname, deltime FROM delivery WHERE deltime < '10:00';
+Relational Algebra:
+π_delid, delname, deltime(σ_deltime < '10:00'(delivery))
+
+5. Find all available drinks
+SQL:
+SELECT drinkname, price FROM drink WHERE drinkavail = 'yes';
+Relational Algebra:
+π_drinkname, price(σ_drinkavail = 'yes'(drink))
+
+Nested Queries:
+
+1. Find customers who ordered pizza
+SQL:
+SELECT fname, lname 
+FROM customer 
+WHERE custid IN (
+    SELECT custid FROM payment WHERE ordid IN 
+    (SELECT ordid FROM order1 WHERE foodid = 
+    (SELECT foodid FROM food WHERE foodname = 'pizza'))
+);
+Relational Algebra:
+π_fname, lname(σ_custid ∈ (π_custid(σ_foodid ∈ (π_foodid(σ_foodname = 'pizza'(food)))(order1))(payment))(customer))
+
+2. Find deliveries made by high-paid employees
+SQL:
+SELECT delid, delname 
+FROM delivery 
+WHERE empid IN (SELECT empid FROM employee WHERE salary > 50000);
+Relational Algebra:
+π_delid, delname(σ_empid ∈ (π_empid(σ_salary > 50000(employee)))(delivery))
+
+3. Find foods costlier than average
+SQL:
+SELECT foodname, price 
+FROM food 
+WHERE price > (SELECT AVG(price) FROM food);
+Relational Algebra:
+π_foodname, price(σ_price > (π_avg_price(food))(food))
+
+4. Find customers who ordered south Indian cuisine
+SQL:
+SELECT fname, lname FROM customer 
+WHERE custid IN (
+    SELECT custid FROM payment WHERE ordid IN 
+    (SELECT ordid FROM order1 WHERE foodid IN 
+    (SELECT foodid FROM food WHERE cuisineid = 
+    (SELECT cuisineid FROM cuisine WHERE cuisinename = 'south indian')))
+);
+Relational Algebra:
+π_fname, lname(σ_custid ∈ (π_custid(σ_foodid ∈ (π_foodid(σ_cuisineid ∈ (π_cuisineid(σ_cuisinename = 'south indian'(cuisine)))(food)))(order1))(payment))(customer))
+
+5. Find chefs with salary higher than employee average
+SQL:
+SELECT chefname 
+FROM chef 
+WHERE salary > (SELECT AVG(salary) FROM employee);
+Relational Algebra:
+π_chefname(σ_salary > (π_avg_salary(employee))(chef))
+
+Set Operations:
+
+1. List all unique addresses from customers and employees
+SQL:
+SELECT address FROM customer 
+UNION 
+SELECT address FROM employee;
+Relational Algebra:
+π_address(customer) ∪ π_address(employee)
+
+2. Find addresses where both customers and employees have pincode 560041
+SQL:
+SELECT address FROM customer WHERE pincode = 560041
+INTERSECT 
+SELECT address FROM employee WHERE address IN 
+    (SELECT address FROM customer WHERE pincode = 560041);
+Relational Algebra:
+π_address(σ_pincode = 560041(customer)) ∩ π_address(σ_pincode = 560041(σ_address ∈ π_address(customer))(employee))
+
+Group By:
+
+1. Count orders by payment method
+SQL:
+SELECT paymethod, COUNT(*) as payment_count 
+FROM payment 
+GROUP BY paymethod;
+Relational Algebra:
+γ_paymethod; COUNT(*) → payment_count(payment)
+
+2. Calculate total cost by food
+SQL:
+SELECT f.foodname, SUM(o.totalcost) as total_sales 
+FROM order1 o 
+JOIN food f ON o.foodid = f.foodid 
+GROUP BY f.foodname;
+Relational Algebra:
+γ_foodname; SUM(totalcost) → total_sales(π_foodname, totalcost(order1 ⨝ food))
+
+Having:
+
+1. Find cuisines with more than 3 food items
+SQL:
+SELECT c.cuisinename, COUNT(f.foodid) as food_count 
+FROM cuisine c 
+JOIN food f ON c.cuisineid = f.cuisineid 
+GROUP BY c.cuisinename 
+HAVING COUNT(f.foodid) > 3;
+Relational Algebra:
+γ_cuisinename; COUNT(foodid) → food_count(π_cuisinename, foodid(cuisine ⨝ food)) 
+σ_food_count > 3
+
+2. Find delivery employees with multiple deliveries
+SQL:
+SELECT empid, COUNT(*) as delivery_count 
+FROM delivery 
+GROUP BY empid 
+HAVING COUNT(*) > 2;
+Relational Algebra:
+γ_empid; COUNT(*) → delivery_count(delivery) 
+σ_delivery_count > 2
+
+Pattern Matching:
+
+1. Find customers with gmail emails
+SQL:
+SELECT fname, lname, emailid 
+FROM customer 
+WHERE emailid LIKE '%gmail%';
+Relational Algebra:
+No direct equivalent in basic relational algebra
+
+2. Find food items containing 'rice'
+SQL:
+SELECT foodname, price 
+FROM food 
+WHERE LOWER(foodname) LIKE '%rice%';
+Relational Algebra:
+No direct equivalent in basic relational algebra
+
+3. Find employees with salary between 40000 and 60000
+SQL:
+SELECT fname, lname, salary 
+FROM employee 
+WHERE salary BETWEEN 40000 AND 60000;
+Relational Algebra:
+No direct equivalent in basic relational algebra
+
+Correlated Query:
+
+SQL:
+SELECT DISTINCT c.fname, c.lname 
+FROM customer c 
+WHERE EXISTS (
+    SELECT 1 FROM payment p 
+    JOIN order1 o ON p.ordid = o.ordid 
+    WHERE p.custid = c.custid 
+    AND o.totalcost < (
+        SELECT AVG(o2.totalcost) 
+        FROM order1 o2 
+        JOIN payment p2 ON o2.ordid = p2.ordid 
+        WHERE p2.custid > c.custid
+    )
+);
+Relational Algebra:
+This is a complex correlated query with subqueries and requires extended relational algebra or SQL for exact correlation.
+
+Views:
+
+1. Create comprehensive order view
+SQL:
+CREATE VIEW order_details AS 
+SELECT o.ordid, c.fname, c.lname, f.foodname, d.drinkname, o.totalcost,
+       dl.delname, dl.deldate, dl.deltime
+FROM order1 o 
+JOIN payment p ON o.ordid = p.ordid 
+JOIN customer c ON p.custid = c.custid 
+JOIN food f ON o.foodid = f.foodid 
+JOIN drink d ON o.drinkid = d.drinkid
+JOIN delivery dl ON o.delid = dl.delid;
+
+SELECT * FROM order_details;
+Relational Algebra:
+Create View: π_ordid, fname, lname, foodname, drinkname, totalcost, delname, deldate, deltime(order1 ⨝ payment ⨝ customer ⨝ food ⨝ drink ⨝ delivery)
+
+2. Create chef specialization view
+SQL:
+CREATE VIEW chef_specialties AS 
+SELECT ch.chefid, ch.chefname, c.cuisinename, 
+       COUNT(f.foodid) as dishes_count
+FROM chef ch
+JOIN food f ON ch.chefid = f.chefid
+JOIN cuisine c ON f.cuisineid = c.cuisineid
+GROUP BY ch.chefid, ch.chefname, c.cuisinename;
+
+SELECT * FROM chef_specialties;
+Relational Algebra:
+Create View: γ_chefid, chefname, cuisinename; COUNT(foodid) → dishes_count(chef ⨝ food ⨝ cuisine)
