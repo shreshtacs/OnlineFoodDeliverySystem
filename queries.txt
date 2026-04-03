@@ -1,0 +1,372 @@
+select queiries:
+SELECT * FROM order_items;
+
+SELECT * FROM orders;
+
+SELECT * FROM customer;
+
+SELECT * FROM chef;
+
+SELECT * FROM food;
+
+SELECT * FROM employee;
+
+SELECT * FROM cuisine;
+
+SELECT * FROM drink;
+
+SELECT * FROM delivery;
+
+SELECT * FROM order1;
+
+SELECT * FROM payment;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+simple queiries:
+
+-- 1. List all allergic customers 
+SELECT fname, lname FROM customer WHERE allergy IS NOT NULL;
+
+-- 2. Find all food items with high price
+SELECT foodname, price FROM food WHERE price > 100;
+
+-- 3. List all employees with salary above 50000
+SELECT fname, lname, salary FROM employee WHERE salary > 50000;
+
+-- 4. Show all deliveries made before 10:00
+SELECT delid, delname, deltime FROM delivery WHERE deltime < '10:00';
+
+-- 5. Find all available drinks
+SELECT drinkname, price FROM drink WHERE drinkavail = 'yes';
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Nested Queries (5):
+
+-- 1. Find customers who ordered pizza
+SELECT fname, lname 
+FROM customer 
+WHERE custid IN (
+    SELECT custid FROM payment WHERE ordid IN 
+    (SELECT ordid FROM order1 WHERE foodid = 
+    (SELECT foodid FROM food WHERE foodname = 'pizza'))
+);
+
+-- 2. Find deliveries made by high-paid employees
+SELECT delid, delname 
+FROM delivery 
+WHERE empid IN (SELECT empid FROM employee WHERE salary > 50000);
+
+-- 3. Find foods costlier than average
+SELECT foodname, price 
+FROM food 
+WHERE price > (SELECT AVG(price) FROM food);
+
+-- 4. Find customers who ordered south Indian cuisine
+SELECT fname, lname FROM customer 
+WHERE custid IN (
+    SELECT custid FROM payment WHERE ordid IN 
+    (SELECT ordid FROM order1 WHERE foodid IN 
+    (SELECT foodid FROM food WHERE cuisineid = 
+    (SELECT cuisineid FROM cuisine WHERE cuisinename = 'south indian')))
+);
+
+-- 5. Find chefs with salary higher than employee average
+SELECT chefname 
+FROM chef 
+WHERE salary > (SELECT AVG(salary) FROM employee);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+SET Operations (2):
+
+-- 1. List all unique addresses from customers and employees
+SELECT address FROM customer 
+UNION 
+SELECT address FROM employee;
+
+-- 2. Find addresses where both customers and employees have pincode 560041
+SELECT address FROM customer WHERE pincode = 560041
+INTERSECT 
+SELECT address FROM employee WHERE address IN 
+    (SELECT address FROM customer WHERE pincode = 560041);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Group By (2):
+
+-- 1. Count orders by payment method
+SELECT paymethod, COUNT(*) as payment_count 
+FROM payment 
+GROUP BY paymethod;
+
+-- 2. Calculate total cost by food
+SELECT f.foodname, SUM(o.totalcost) as total_sales 
+FROM order1 o 
+JOIN food f ON o.foodid = f.foodid 
+GROUP BY f.foodname;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Having (2):
+-- 1. Find cuisines with more than 3 food items
+SELECT c.cuisinename, COUNT(f.foodid) as food_count 
+FROM cuisine c 
+JOIN food f ON c.cuisineid = f.cuisineid 
+GROUP BY c.cuisinename 
+HAVING COUNT(f.foodid) > 3;
+
+-- 2. Find delivery employees with multiple deliveries
+SELECT empid, COUNT(*) as delivery_count 
+FROM delivery 
+GROUP BY empid 
+HAVING COUNT(*) > 2;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Pattern Matching (3):
+-- 1. Find customers with gmail emails
+SELECT fname, lname, emailid 
+FROM customer 
+WHERE emailid LIKE '%gmail%';
+
+-- 2. Find food items containing 'rice'
+SELECT foodname, price 
+FROM food 
+WHERE LOWER(foodname) LIKE '%rice%';
+
+-- 3. Find employees with salary between 40000 and 60000
+SELECT fname, lname, salary 
+FROM employee 
+WHERE salary BETWEEN 40000 AND 60000;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Correlated Query (1):
+-- Find customers who have orders with amount higher than their average
+SELECT DISTINCT c.fname, c.lname 
+FROM customer c 
+WHERE EXISTS (
+    SELECT 1 FROM payment p 
+    JOIN order1 o ON p.ordid = o.ordid 
+    WHERE p.custid = c.custid 
+    AND o.totalcost < (
+        SELECT AVG(o2.totalcost) 
+        FROM order1 o2 
+        JOIN payment p2 ON o2.ordid = p2.ordid 
+        WHERE p2.custid > c.custid
+    )
+);
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Views (2):
+-- 1. Create comprehensive order view
+CREATE VIEW order_details AS 
+SELECT o.ordid, c.fname, c.lname, f.foodname, d.drinkname, o.totalcost,
+       dl.delname, dl.deldate, dl.deltime
+FROM order1 o 
+JOIN payment p ON o.ordid = p.ordid 
+JOIN customer c ON p.custid = c.custid 
+JOIN food f ON o.foodid = f.foodid 
+JOIN drink d ON o.drinkid = d.drinkid
+JOIN delivery dl ON o.delid = dl.delid;
+
+SELECT * FROM order_details;
+
+-- 2. Create chef specialization view
+CREATE VIEW chef_specialties AS 
+SELECT ch.chefid, ch.chefname, c.cuisinename, 
+       COUNT(f.foodid) as dishes_count
+FROM chef ch
+JOIN food f ON ch.chefid = f.chefid
+JOIN cuisine c ON f.cuisineid = c.cuisineid
+GROUP BY ch.chefid, ch.chefname, c.cuisinename;
+
+select * from chef_specialties;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Exists/Not Exists (2):
+-- 1. Find customers with orders
+SELECT c.fname, c.lname 
+FROM customer c 
+WHERE EXISTS (
+    SELECT 1 FROM payment p 
+    WHERE p.custid = c.custid
+);
+
+-- 2. Find customers without orders
+SELECT c.fname, c.lname 
+FROM customer c 
+WHERE NOT EXISTS (
+    SELECT 1 FROM payment p 
+    WHERE p.custid = c.custid
+);
+
+
+Not Exists
+
+-- Find customers who have not placed any orders.
+SELECT fname, lname 
+FROM customer c 
+WHERE NOT EXISTS (
+    SELECT 1 
+    FROM payment p 
+    WHERE p.custid = c.custid
+);
+ SELECT chefid, chefname
+  2  FROM chef c
+  3  WHERE NOT EXISTS (
+  4      SELECT 1
+  5      FROM food f
+  6      WHERE f.chefid < c.chefid
+  7  );
+  
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Aggregate Functions
+
+--Calculate Total Revenue
+SELECT SUM(totalcost) AS total_revenue 
+FROM order1;
+
+--Find the Maximum Food Price
+SELECT MAX(price) AS max_food_price 
+FROM food;
+
+
+--Count the Number of Employees
+SELECT COUNT(*) AS employee_count 
+FROM employee;
+
+--Average Salary of Employees
+SELECT AVG(salary) AS avg_salary 
+FROM employee;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Trigger
+
+-- Create a table to store logs
+CREATE TABLE order_log (
+    log_id NUMBER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+    order_id NUMBER,
+    log_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    message VARCHAR2(100)
+);
+
+-- Create the trigger
+CREATE OR REPLACE TRIGGER order_insert_log
+AFTER INSERT ON orders
+FOR EACH ROW
+BEGIN
+    INSERT INTO order_log (order_id, message) 
+    VALUES (:NEW.order_id, 'New order inserted with ID ' || :NEW.order_id);
+END;
+/
+
+
+
+-- Create a trigger to prevent orders with a total cost below 100
+CREATE OR REPLACE TRIGGER prevent_low_cost_orders
+BEFORE INSERT ON orders
+FOR EACH ROW
+BEGIN
+    IF :NEW.total_amount < 100 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Order total amount must be at least 100.');
+    END IF;
+END;
+/
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+-- 1. Stored Procedure to calculate total orders value for a customer
+CREATE OR REPLACE PROCEDURE calculate_customer_orders(
+    p_custid IN NUMBER,
+    p_total_value OUT NUMBER,
+    p_order_count OUT NUMBER
+) 
+AS 
+BEGIN 
+    -- Get total value of all orders
+    SELECT COUNT(o.ordid), SUM(o.totalcost)
+    INTO p_order_count, p_total_value
+    FROM order1 o 
+    JOIN payment p ON o.ordid = p.ordid 
+    WHERE p.custid = p_custid;
+    
+    -- If no orders found, set values to 0
+    IF p_total_value IS NULL THEN
+        p_total_value := 0;
+        p_order_count := 0;
+    END IF;
+EXCEPTION 
+    WHEN NO_DATA_FOUND THEN
+        p_total_value := 0;
+        p_order_count := 0;
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20001, 'An error occurred: ' || SQLERRM);
+END;
+/
+
+-- Usage example:
+-- DECLARE
+--     v_total NUMBER;
+--     v_count NUMBER;
+-- BEGIN
+--     calculate_customer_orders(100, v_total, v_count);
+--     DBMS_OUTPUT.PUT_LINE('Total orders: ' || v_count);
+--     DBMS_OUTPUT.PUT_LINE('Total value: ' || v_total);
+-- END;
+-- /
+
+-- 2. Stored Procedure to update food price and availability
+CREATE OR REPLACE PROCEDURE update_food_details(
+    p_foodid IN NUMBER,
+    p_new_price IN NUMBER,
+    p_new_quantity IN NUMBER,
+    p_status OUT VARCHAR2
+) 
+AS 
+    v_current_price NUMBER;
+    v_current_quantity NUMBER;
+BEGIN 
+    -- Get current values
+    SELECT price, quantity 
+    INTO v_current_price, v_current_quantity
+    FROM food 
+    WHERE foodid = p_foodid;
+    
+    -- Update price and quantity
+    UPDATE food 
+    SET price = p_new_price,
+        quantity = p_new_quantity,
+        foodavail = CASE 
+                      WHEN p_new_quantity > 0 THEN 'yes'
+                      ELSE 'no'
+                    END
+    WHERE foodid = p_foodid;
+    
+    IF SQL%ROWCOUNT > 0 THEN
+        p_status := 'Success - Updated price from ' || v_current_price || 
+                   ' to ' || p_new_price || ' and quantity from ' || 
+                   v_current_quantity || ' to ' || p_new_quantity;
+    ELSE
+        p_status := 'Food item not found';
+    END IF;
+    
+    COMMIT;
+EXCEPTION 
+    WHEN NO_DATA_FOUND THEN
+        p_status := 'Error: Food item not found';
+        ROLLBACK;
+    WHEN OTHERS THEN
+        p_status := 'Error: ' || SQLERRM;
+        ROLLBACK;
+END;
+/
+
+-- Usage example:
+-- DECLARE
+--     v_status VARCHAR2(200);
+-- BEGIN
+--     update_food_details(60, 120, 5, v_status);
+--     DBMS_OUTPUT.PUT_LINE(v_status);
+-- END;
+-- /
