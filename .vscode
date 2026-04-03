@@ -1,0 +1,6 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Users\\Paramesh\\Downloads\\ojdbc11.jar"
+    ]
+}
